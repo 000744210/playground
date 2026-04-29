@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.GameTick;
-import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -40,7 +39,7 @@ public class OverheadPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-
+		// Probably should use sprites
 		prayerImages = Map.ofEntries(
 				Map.entry(Prayer.AUGURY,ImageUtil.loadImageResource(getClass(),"/Augury.png")),
 				Map.entry(Prayer.BURST_OF_STRENGTH,ImageUtil.loadImageResource(getClass(),"/Burst_of_Strength.png")),

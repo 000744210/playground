@@ -38,7 +38,6 @@ public class OverheadOverlay extends Overlay
     public Dimension render(Graphics2D graphics)
     {
         Player player = client.getLocalPlayer();
-        // Get position above player's head
 
         LocalPoint lp = player.getLocalLocation();
 
@@ -46,10 +45,6 @@ public class OverheadOverlay extends Overlay
 
         // Adjust height in 3D space
         int zOffset = player.getLogicalHeight()+24; // tweak this
-
-        if(isSkulled){
-            //zOffset += 25;
-        }
 
         Point point = Perspective.localToCanvas(
                 client,
@@ -61,8 +56,7 @@ public class OverheadOverlay extends Overlay
         if (point == null)
             return null;
 
-        boolean isOverheadActive = client.getLocalPlayer().getOverheadIcon() != null;
-
+        boolean isOverheadActive = player.getOverheadIcon() != null;
 
         int[] overheadActivePattern = new int[] {-30,+30,-60,+60,-90,+90,-120,+120};
         int[] noOverheadAndEvenPattern = new int[] {-15,+15,-45,+45,-75,+75,-105,+105};
@@ -79,7 +73,7 @@ public class OverheadOverlay extends Overlay
         }
 
 
-
+        boolean isOverheadTextActive = player.getOverheadText() != null;
 
         for(int i = 0;i<plugin.activePrayers.size();i++){
             Prayer prayer = plugin.activePrayers.get(i);
@@ -88,8 +82,13 @@ public class OverheadOverlay extends Overlay
             int yOffset = 0;
             if(isSkulled){
                 yOffset = -28;
-
             }
+
+            // Chat text changes the overhead offset.
+            if(isOverheadTextActive){
+                yOffset = yOffset - 5;
+            }
+
             int offset = chosenPattern[i];
             graphics.drawImage(
                     image,
