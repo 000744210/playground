@@ -5,7 +5,12 @@ import net.runelite.client.config.*;
 @ConfigGroup("alloverheadprayers")
 public interface OverheadConfig extends Config
 {
-
+    enum PrayerIconSize
+    {
+        BIG,
+        MEDIUM,
+        SMALL
+    }
 
     @ConfigItem(
             keyName = "filterPrayers",
@@ -19,13 +24,13 @@ public interface OverheadConfig extends Config
 
 
     @ConfigItem(
-            keyName = "showSmallIcons",
-            name = "Use Small Icons",
-            description = "Uses smaller prayer icons instead of full-size ones"
+            keyName = "iconSize",
+            name = "Icon Size",
+            description = "Select the prayer icon size"
     )
-    default boolean showSmallIcons()
+    default PrayerIconSize iconSize()
     {
-        return true;
+        return PrayerIconSize.MEDIUM;
     }
 
 

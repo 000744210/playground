@@ -30,12 +30,18 @@ public class OverheadOverlay extends Overlay
         this.config = config;
 
         setPosition(OverlayPosition.DYNAMIC);
+        setMovable(false);
         setLayer(OverlayLayer.UNDER_WIDGETS);
     }
 
     @Override
     public Dimension render(Graphics2D graphics)
     {
+
+        if(plugin.activePrayers.isEmpty()){ // no prayers active. Don't waste compute.
+            return null;
+        }
+
         Player player = client.getLocalPlayer();
 
         LocalPoint lp = player.getLocalLocation();
@@ -58,7 +64,7 @@ public class OverheadOverlay extends Overlay
         boolean isOverheadActive = player.getOverheadIcon() != null;
         boolean isOverheadTextActive = player.getOverheadText() != null;
 
-        if(!config.showSmallIcons()) {
+        if(config.iconSize() == OverheadConfig.PrayerIconSize.BIG) {
 
             int[] overheadActivePattern = new int[]{-30, +30, -60, +60, -90, +90, -120, +120};
             int[] noOverheadAndEvenPattern = new int[]{-15, +15, -45, +45, -75, +75, -105, +105};
@@ -98,7 +104,7 @@ public class OverheadOverlay extends Overlay
                 );
 
             }
-        }else{
+        }else if(config.iconSize() == OverheadConfig.PrayerIconSize.SMALL){
 
             if(isOverheadActive) {
                 int[][][] overheadActivePattern = {
@@ -109,7 +115,64 @@ public class OverheadOverlay extends Overlay
                 };
 
                 int[][] chosenPattern = null;
-                if (!plugin.activePrayers.isEmpty()) {
+
+                    chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
+
+
+                    for (int i = 0; i < chosenPattern.length; i++) {
+                        int[] offsets = chosenPattern[i];
+                        Prayer prayer = plugin.activePrayers.get(i);
+                        BufferedImage image = plugin.prayerImages.get(prayer)[2];
+
+                        graphics.drawImage(
+                                image,
+                                point.getX() - image.getWidth() / 2 + offsets[0] * 4,
+                                point.getY() + image.getHeight() / 2 - 30 + offsets[1],
+                                null
+                        );
+
+                    }
+
+            }else{
+                int[][][] overheadActivePattern = {
+                        {{0, 0}},                    // if only 1 prayer
+                        {{-8, 0}, {8, 0}},        // if only 2 prayers
+                        {{-8, -8}, {-8, 8}, {8, -8}},
+                        {{-8, -8}, {-8, 8}, {8, -8}, {8, 8}}
+                };
+
+                int[][] chosenPattern = null;
+
+                    chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
+
+                    for (int i = 0; i < chosenPattern.length; i++) {
+                        int[] offsets = chosenPattern[i];
+                        Prayer prayer = plugin.activePrayers.get(i);
+                        BufferedImage image = plugin.prayerImages.get(prayer)[2];
+
+                            graphics.drawImage(
+                                    image,
+                                    point.getX() - image.getWidth() / 2 + offsets[0],
+                                    point.getY() + image.getHeight() / 2 - 30 + offsets[1],
+                                    null
+                            );
+
+                    }
+
+
+            }
+        } else if(config.iconSize() == OverheadConfig.PrayerIconSize.MEDIUM){
+
+            if(isOverheadActive) {
+                int[][][] overheadActivePattern = {
+                        {{-10, 0}},                    // if only 1 prayer
+                        {{-10, 0}, {10, 0}},        // if only 2 prayers
+                        {{-10, -10}, {-10, 10}, {10, 0}},
+                        {{-10, -10}, {-10, 10}, {10, -10}, {10, 10}}
+                };
+
+                int[][] chosenPattern = null;
+
                     chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
 
 
@@ -120,23 +183,23 @@ public class OverheadOverlay extends Overlay
 
                         graphics.drawImage(
                                 image,
-                                point.getX() - image.getWidth() / 2 + offsets[0] * 4,
-                                point.getY() + image.getHeight() / 2 - 30 + offsets[1],
+                                point.getX() - image.getWidth() / 2 + offsets[0] * 3,
+                                point.getY() + image.getHeight() / 2 - 40 + offsets[1],
                                 null
                         );
 
                     }
-                }
+
             }else{
                 int[][][] overheadActivePattern = {
                         {{0, 0}},                    // if only 1 prayer
-                        {{-8, 0}, {8, 0}},        // if only 2 prayers
-                        {{-8, -8}, {-8, 8}, {8, -8}},
-                        {{-8, -8}, {-8, 8}, {8, -8}, {8, 8}}
+                        {{-11, 0}, {11, 0}},        // if only 2 prayers
+                        {{-11, -10}, {-11, 10}, {11, -10}},
+                        {{-11, -10}, {-11, 10}, {11, -10}, {11, 10}}
                 };
 
                 int[][] chosenPattern = null;
-                if (!plugin.activePrayers.isEmpty()) {
+
                     chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
 
                     for (int i = 0; i < chosenPattern.length; i++) {
@@ -144,15 +207,15 @@ public class OverheadOverlay extends Overlay
                         Prayer prayer = plugin.activePrayers.get(i);
                         BufferedImage image = plugin.prayerImages.get(prayer)[1];
 
-                            graphics.drawImage(
-                                    image,
-                                    point.getX() - image.getWidth() / 2 + offsets[0],
-                                    point.getY() + image.getHeight() / 2 - 30 + offsets[1],
-                                    null
-                            );
+                        graphics.drawImage(
+                                image,
+                                point.getX() - image.getWidth() / 2 + offsets[0],
+                                point.getY() + image.getHeight() / 2 - 40 + offsets[1],
+                                null
+                        );
 
                     }
-                }
+
 
             }
         }
