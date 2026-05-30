@@ -20,15 +20,14 @@ public class OverheadOverlay extends Overlay
 
     private final Client client;
     private final OverheadPlugin plugin;
-
-
-
+    private final OverheadConfig config;
 
     @Inject
-    public OverheadOverlay(Client client, OverheadPlugin plugin)
+    public OverheadOverlay(Client client, OverheadPlugin plugin, OverheadConfig config)
     {
         this.client = client;
         this.plugin = plugin;
+        this.config = config;
 
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.UNDER_WIDGETS);
@@ -57,48 +56,106 @@ public class OverheadOverlay extends Overlay
             return null;
 
         boolean isOverheadActive = player.getOverheadIcon() != null;
-
-        int[] overheadActivePattern = new int[] {-30,+30,-60,+60,-90,+90,-120,+120};
-        int[] noOverheadAndEvenPattern = new int[] {-15,+15,-45,+45,-75,+75,-105,+105};
-        int[] noOverheadAndOddPattern = new int[] {0,-30,+30,-60,+60,-90,+90,-120,+120};
-
-        int[] chosenPattern = null;
-
-        if(isOverheadActive){
-            chosenPattern = overheadActivePattern;
-        }else if(plugin.activePrayers.size() % 2 == 0){
-            chosenPattern = noOverheadAndEvenPattern;
-        }else{
-            chosenPattern = noOverheadAndOddPattern;
-        }
-
-
         boolean isOverheadTextActive = player.getOverheadText() != null;
 
-        for(int i = 0;i<plugin.activePrayers.size();i++){
-            Prayer prayer = plugin.activePrayers.get(i);
-            BufferedImage image = plugin.prayerImages.get(prayer);
+        if(!config.showSmallIcons()) {
 
-            int yOffset = 0;
-            if(isSkulled){
-                yOffset = -28;
+            int[] overheadActivePattern = new int[]{-30, +30, -60, +60, -90, +90, -120, +120};
+            int[] noOverheadAndEvenPattern = new int[]{-15, +15, -45, +45, -75, +75, -105, +105};
+            int[] noOverheadAndOddPattern = new int[]{0, -30, +30, -60, +60, -90, +90, -120, +120};
+
+            int[] chosenPattern = null;
+
+            if (isOverheadActive) {
+                chosenPattern = overheadActivePattern;
+            } else if (plugin.activePrayers.size() % 2 == 0) {
+                chosenPattern = noOverheadAndEvenPattern;
+            } else {
+                chosenPattern = noOverheadAndOddPattern;
             }
 
-            // Chat text changes the overhead offset.
-            if(isOverheadTextActive){
-                yOffset = yOffset - 5;
+
+            for (int i = 0; i < plugin.activePrayers.size(); i++) {
+                Prayer prayer = plugin.activePrayers.get(i);
+                BufferedImage image = plugin.prayerImages.get(prayer)[0];
+
+                int yOffset = 0;
+                if (isSkulled) {
+                    yOffset = -28;
+                }
+
+                // Chat text changes the overhead offset.
+                if (isOverheadTextActive) {
+                    yOffset = yOffset - 5;
+                }
+
+                int offset = chosenPattern[i];
+                graphics.drawImage(
+                        image,
+                        point.getX() - image.getWidth() / 2 + offset,
+                        point.getY() - 30 - 2 + yOffset,
+                        null
+                );
+
             }
+        }else{
 
-            int offset = chosenPattern[i];
-            graphics.drawImage(
-                    image,
-                    point.getX() - image.getWidth() / 2+offset,
-                    point.getY()-30 + yOffset,
-                    null
-            );
+            if(isOverheadActive) {
+                int[][][] overheadActivePattern = {
+                        {{-7, 0}},                    // if only 1 prayer
+                        {{-7, 0}, {7, 0}},        // if only 2 prayers
+                        {{-7, -8}, {-7, 8}, {7, 0}},
+                        {{-7, -8}, {-7, 8}, {7, -8}, {7, 8}}
+                };
 
+                int[][] chosenPattern = null;
+                if (!plugin.activePrayers.isEmpty()) {
+                    chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
+
+
+                    for (int i = 0; i < chosenPattern.length; i++) {
+                        int[] offsets = chosenPattern[i];
+                        Prayer prayer = plugin.activePrayers.get(i);
+                        BufferedImage image = plugin.prayerImages.get(prayer)[1];
+
+                        graphics.drawImage(
+                                image,
+                                point.getX() - image.getWidth() / 2 + offsets[0] * 4,
+                                point.getY() + image.getHeight() / 2 - 30 + offsets[1],
+                                null
+                        );
+
+                    }
+                }
+            }else{
+                int[][][] overheadActivePattern = {
+                        {{0, 0}},                    // if only 1 prayer
+                        {{-8, 0}, {8, 0}},        // if only 2 prayers
+                        {{-8, -8}, {-8, 8}, {8, -8}},
+                        {{-8, -8}, {-8, 8}, {8, -8}, {8, 8}}
+                };
+
+                int[][] chosenPattern = null;
+                if (!plugin.activePrayers.isEmpty()) {
+                    chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
+
+                    for (int i = 0; i < chosenPattern.length; i++) {
+                        int[] offsets = chosenPattern[i];
+                        Prayer prayer = plugin.activePrayers.get(i);
+                        BufferedImage image = plugin.prayerImages.get(prayer)[1];
+
+                            graphics.drawImage(
+                                    image,
+                                    point.getX() - image.getWidth() / 2 + offsets[0],
+                                    point.getY() + image.getHeight() / 2 - 30 + offsets[1],
+                                    null
+                            );
+
+                    }
+                }
+
+            }
         }
-
         return null;
     }
 
