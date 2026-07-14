@@ -44,19 +44,26 @@ public class OverheadOverlay extends Overlay
 
         Player player = client.getLocalPlayer();
 
+
         LocalPoint lp = player.getLocalLocation();
 
-        boolean isSkulled = client.getLocalPlayer().getSkullIcon() != -1;
-
+        int groundHeight = Perspective.getFootprintTileHeight(
+                client,
+                player.getLocalLocation(),
+                client.getPlane(),
+                player.getFootprintSize()
+        );
         // Adjust height in 3D space
         int zOffset = player.getLogicalHeight()+24; // tweak this
 
         Point point = Perspective.localToCanvas(
                 client,
-                lp,
-                client.getPlane(),
-                zOffset
+                player.getLocalLocation().getX(),
+                player.getLocalLocation().getY(),
+                groundHeight - zOffset
         );
+
+        boolean isSkulled = client.getLocalPlayer().getSkullIcon() != -1;
 
         if (point == null)
             return null;
@@ -120,6 +127,18 @@ public class OverheadOverlay extends Overlay
 
 
                     for (int i = 0; i < chosenPattern.length; i++) {
+
+                        int yOffset = 0;
+                        if (isSkulled) {
+                            yOffset = -28;
+                        }
+
+                        // Chat text changes the overhead offset.
+                        if (isOverheadTextActive) {
+                            yOffset = yOffset - 5;
+                        }
+
+
                         int[] offsets = chosenPattern[i];
                         Prayer prayer = plugin.activePrayers.get(i);
                         BufferedImage image = plugin.prayerImages.get(prayer)[2];
@@ -127,7 +146,7 @@ public class OverheadOverlay extends Overlay
                         graphics.drawImage(
                                 image,
                                 point.getX() - image.getWidth() / 2 + offsets[0] * 4,
-                                point.getY() + image.getHeight() / 2 - 30 + offsets[1],
+                                point.getY() + image.getHeight() / 2 - 30 + offsets[1] + yOffset,
                                 null
                         );
 
@@ -146,16 +165,27 @@ public class OverheadOverlay extends Overlay
                     chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
 
                     for (int i = 0; i < chosenPattern.length; i++) {
+
+                        int yOffset = 0;
+                        if (isSkulled) {
+                            yOffset = -28;
+                        }
+
+                        // Chat text changes the overhead offset.
+                        if (isOverheadTextActive) {
+                            yOffset = yOffset - 5;
+                        }
+
                         int[] offsets = chosenPattern[i];
                         Prayer prayer = plugin.activePrayers.get(i);
                         BufferedImage image = plugin.prayerImages.get(prayer)[2];
 
-                            graphics.drawImage(
-                                    image,
-                                    point.getX() - image.getWidth() / 2 + offsets[0],
-                                    point.getY() + image.getHeight() / 2 - 30 + offsets[1],
-                                    null
-                            );
+                        graphics.drawImage(
+                                image,
+                                point.getX() - image.getWidth() / 2 + offsets[0],
+                                point.getY() + image.getHeight() / 2 - 30 + offsets[1] + yOffset,
+                                null
+                        );
 
                     }
 
@@ -177,6 +207,17 @@ public class OverheadOverlay extends Overlay
 
 
                     for (int i = 0; i < chosenPattern.length; i++) {
+                        int yOffset = 0;
+                        if (isSkulled) {
+                            yOffset = -28;
+                        }
+
+                        // Chat text changes the overhead offset.
+                        if (isOverheadTextActive) {
+                            yOffset = yOffset - 5;
+                        }
+
+
                         int[] offsets = chosenPattern[i];
                         Prayer prayer = plugin.activePrayers.get(i);
                         BufferedImage image = plugin.prayerImages.get(prayer)[1];
@@ -184,7 +225,7 @@ public class OverheadOverlay extends Overlay
                         graphics.drawImage(
                                 image,
                                 point.getX() - image.getWidth() / 2 + offsets[0] * 3,
-                                point.getY() + image.getHeight() / 2 - 40 + offsets[1],
+                                point.getY() + image.getHeight() / 2 - 40 + offsets[1]+yOffset,
                                 null
                         );
 
@@ -203,6 +244,16 @@ public class OverheadOverlay extends Overlay
                     chosenPattern = overheadActivePattern[plugin.activePrayers.size() - 1];
 
                     for (int i = 0; i < chosenPattern.length; i++) {
+                        int yOffset = 0;
+                        if (isSkulled) {
+                            yOffset = -28;
+                        }
+
+                        // Chat text changes the overhead offset.
+                        if (isOverheadTextActive) {
+                            yOffset = yOffset - 5;
+                        }
+
                         int[] offsets = chosenPattern[i];
                         Prayer prayer = plugin.activePrayers.get(i);
                         BufferedImage image = plugin.prayerImages.get(prayer)[1];
@@ -210,7 +261,7 @@ public class OverheadOverlay extends Overlay
                         graphics.drawImage(
                                 image,
                                 point.getX() - image.getWidth() / 2 + offsets[0],
-                                point.getY() + image.getHeight() / 2 - 40 + offsets[1],
+                                point.getY() + image.getHeight() / 2 - 40 + offsets[1]+yOffset,
                                 null
                         );
 
