@@ -174,6 +174,11 @@ public class OverheadPlugin extends Plugin
 						ImageUtil.loadImageResource(getClass(), "/big/Thick_Skin.png"),
 						ImageUtil.loadImageResource(getClass(), "/medium/Thick_Skin.png"),
 						ImageUtil.loadImageResource(getClass(), "/small/Thick_Skin.png")
+				}),
+				Map.entry(Prayer.ULTIMATE_STRENGTH, new BufferedImage[]{
+						ImageUtil.loadImageResource(getClass(), "/big/Ultimate_Strength.png"),
+						ImageUtil.loadImageResource(getClass(), "/medium/Ultimate_Strength.png"),
+						ImageUtil.loadImageResource(getClass(), "/small/Ultimate_Strength.png")
 				})
 		);
 		prayerNames = Map.ofEntries(
@@ -200,7 +205,8 @@ public class OverheadPlugin extends Plugin
 				Map.entry("sharp eye", Prayer.SHARP_EYE),
 				Map.entry("steel skin", Prayer.STEEL_SKIN),
 				Map.entry("superhuman strength", Prayer.SUPERHUMAN_STRENGTH),
-				Map.entry("thick skin", Prayer.THICK_SKIN)
+				Map.entry("thick skin", Prayer.THICK_SKIN),
+				Map.entry("ultimate strength", Prayer.THICK_SKIN)
 		);
 		updatePrayersToFilter();
 		overlayManager.add(overlay);
@@ -282,7 +288,7 @@ public class OverheadPlugin extends Plugin
 		{
 			if (vigourUnlocked)
 			{
-				// it's Deadeye
+				// it's MYSTIC VIGOUR
 				tempActivePrayers.add(Prayer.MYSTIC_VIGOUR);
 			}
 			else
